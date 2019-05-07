@@ -54,8 +54,7 @@ class AwsiotPlugin(PluginBase):
         self.operationalTimeout = self.config.get('operationalTimeout', 5)
         self.drainingFrequency = self.config.get('drainingFrequency', 2)
 
-        status_topic = '{}_status'.format(self.config.get('client_id', self.name + ' client').lower())
-        status_topic = status_topic.replace('_', '/')
+        status_topic = '{}/status'.format(self.config.get('client_id', self.name + ' client').lower())
         
         self.awsiot_will_topic = self.config.get('will_topic', None)
         self.awsiot_onOnline_topic = self.config.get('birth_topic', None)
