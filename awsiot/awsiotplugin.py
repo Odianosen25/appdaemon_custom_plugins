@@ -30,11 +30,6 @@ class AwsiotPlugin(PluginBase):
         else:
             self.namespace = 'default'
 
-        if 'verbose' in self.config:
-            self.verbose = self.config['verbose']
-        else:
-            self.verbose = False
-
         self.awsiot_endpoint = self.config.get('client_endpoint')
         self.awsiot_port = self.config.get('client_port', 8883)
 
