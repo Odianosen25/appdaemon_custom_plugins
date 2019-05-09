@@ -32,6 +32,7 @@ class HwstatsPlugin(PluginBase):
         self.logger.info("Hardware Stats Plugin Initializing")
         
         self.hw_sensors = self.config.get('sensors', [])
+        self.hw_update_interval = self.config.get('update_interval', 1.0)
 
         self.loop = self.AD.loop # get AD loop
         self.state_Lock = asyncio.Lock(loop = self.loop)
@@ -89,7 +90,7 @@ class HwstatsPlugin(PluginBase):
             elif self.getHWStats != None and self.getHWStats.done():
                 self.getHWStats = asyncio.ensure_future(utils.run_in_executor(self, self.get_sensor_states, first_time), loop = self.loop)
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(self.hw_update_interval)
 
     #
     # Set State
@@ -155,6 +156,16 @@ class HwstatsPlugin(PluginBase):
             kwargs = {"state" : state, "attributes" : {"days" : days, "seconds" : seconds, "friendly_name" : "Hardware Up Time"}}
             if not first_time:
                 self.loop.create_task(self.state_update(entity_id, kwargs))
+
+        if "network" in self.hw_sensors:
+            data = psutil.net_io_counters(pernic=True)
+            for k, v in data.items():
+                entity_id = "sensor.{}_interface".format(k)
+                sensorData = v
+                kwargs = {"state" : sensorData.bytes_sent, "attributes" : {"bytes_recv" : sensorData.bytes_recv, "packets_sent" : sensorData.packets_sent, 
+                        "bytes_sent" : sensorData.bytes_sent , "packets_recv" : sensorData.packets_recv, "friendly_name" : "{} Interface".format(k.capitalize())}}
+                if not first_time:
+                    self.loop.create_task(self.state_update(entity_id, kwargs))
 
     async def state_update(self, entity_id, kwargs):
         self.logger.debug("Updating State for Entity_ID %s, with %s", entity_id, kwargs)
