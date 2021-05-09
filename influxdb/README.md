@@ -103,7 +103,7 @@ class MQTT2InfluxDB(ad.ADBase):
         entity_id = f"{domain}.{siteId}"
         attributes = {"friendly_name": friendly_name, "siteId": siteId}
         
-        if not self.influxdb.entity_exists:
+        if not self.influxdb.entity_exists(entity_id):
             # it doesn't exist yet
             self.influxdb.add_entity(entity_id, "None", attributes)
         
