@@ -38,8 +38,7 @@ To configure the plugin, the following paramters are required:
 - ``token:`` This must be declared, and is the token to be used to accesss the database. More can be read [here](https://docs.influxdata.com/influxdb/v2.0/security/tokens/)
 - ``org:`` This must be declared, and its the ``organization`` in the database the plugin is to store data in the database. More can be read [here](https://docs.influxdata.com/influxdb/v2.0/organizations/)
 - ``timeout:`` (optional, int) The connection timeout to used, when accessing the database in milliseconds. This defaults to ``10000``
-- ``bucket:`` This must be declared, and its the bucket where the data will be stored within the database. More can be read [here](https://docs.influxdata.com/influxdb/v2.0/organizations/buckets/). For flexibility, this can be either declared either top level, whereby all data to be stored using this plugin will enter a single bucket, at the ``databases`` level,
-where each database has its own bucket.
+- ``bucket:`` This must be declared, and its the bucket where the data will be stored within the database. More can be read [here](https://docs.influxdata.com/influxdb/v2.0/organizations/buckets/). For flexibility, this can either be declared at the top level, whereby all data to be stored using this plugin will enter a single bucket. Or on the other hand at the ``databases`` level, where each database has its own bucket.
 - ``databases:`` This must be declared, and its essenatially the ``namespaces`` the plugin is to get data from. Each `database` as said earlier is a valid namespace within AD, and can be configured using the following
     - ``bucket:`` (optional, str) If wanting the data from the namespace to be in a certain bucket, this config here over rides the top level one if available
     - ``tags:`` (optional, list) When storing data into influxdb, it allows for each data to be tagged. This can be very userful for filtering and grouping data together. The plugin by default
@@ -51,15 +50,13 @@ where each database has its own bucket.
 Using the Plugin
 =================
 
-When working on your design to use this plugin, some certain things have to be put into considering. The plugin stores data as explained below.
+When working on your design to use this plugin, some certain things have to be put into consideration. The plugin stores data as explained thus:
+
 Influxdb demands (outside time) the ``measurement`` and ``field`` values to be provided when storing data. This plugin uses the ``friendly_name``
 of the ``entity_id`` as the measurement value, and the ``domain`` of the entity as the ``field``. So for example an entity_id ``temperature.living_room``, 
-with a friendly_name "Living Room Temperature", and assuming it has an attribute of `siteId` within it with the value "living_room" and the plugin is setup to use `siteId` as a tag. 
-The plugin will be broke down entity as having ``measurement`` as "Living Room Temperature", ``field`` as "temperature", and tags ``entity_id`` as "temperature.living_room" and 
-``siteId`` as "living_room".
+with a friendly_name "Living Room Temperature", and assuming it has an attribute of `siteId` within it with the value "living_room" and the plugin is setup to use `siteId` as a tag. The plugin will break down the entity, and allocate the metric ``measurement`` as "Living Room Temperature", ``field`` as "temperature", and tags ``entity_id`` as "temperature.living_room" and ``siteId`` as "living_room".
 
-It is understood when working with different platforms like HASS, it doesn't give entities using such domains. So it will be up to the user to develop an app, which can convert the data as required into one the plugin understands, and store the entities within the plugin's namespace; since it is temporary. Then the plugin can be setup to pick the data from its own namespace.
-This can be easily done with a few lines of code. But if wanting to convert data from say MQTT, it becomes easy as the user will simply have to do the following
+It is understood when working with different platforms like HASS, it doesn't give entities using such domains. So it will be up to the user to develop an app, which can convert the data as required into one the plugin understands, and store the entities within the plugin's namespace; since it is temporary. Then the plugin can be setup to pick the data from its own namespace. This can be easily done with a few lines of code. But if wanting to convert data from say MQTT, it becomes easy as the user will simply have to do the following
 - First decide what data you want to store, and how your entity_id will be formed based on the information above
 - Also decide what friendly_names you want to use for each entity_id, and tags if needed
 - Create an app within the MQTT namespace
