@@ -80,7 +80,7 @@ class MQTT2InfluxDB(ad.ADBase):
         self.mqtt = self.get_plugin_api("MQTT")
         self.influxdb = self.get_plugin_api("INFLUXDB")
 
-        wildcard = "my_super_topic/#"
+        wildcard = "temperature/#"
 
         if topic not in self.mqtt.get_plugin_config()["topics"]: #first check if it has been subscribed to, and if not subscribe
             self.mqtt.mqtt_subscribe(topic)
