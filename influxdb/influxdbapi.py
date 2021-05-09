@@ -71,21 +71,11 @@ class Influxdb(adbase.ADBase, adapi.ADAPI):
         Examples:
             Get device state over the last 5 days.
             >>> data = self.get_history(entity_id="light.office_lamp", days=5)
-            Get device zwave data over the last 2 days and walk forward.
-            >>> import datetime
-            >>> from datetime import timedelta
-            >>> start_time = datetime.datetime.now() - timedelta(days=2)
-            >>> data = self.get_history(event="zwave", start_time=start_time)
-            Get event data from the hass and mqtt namespaces over the past 5 days.
-            >>> import datetime
-            >>> from datetime import timedelta
-            >>> start_time = datetime.datetime.now() - timedelta(days=5)
-            >>> data = self.get_history(event="zwave", start_time=start_time, days=5, database="hass,mqtt")
-            Get all data from yesterday and walk 5 days back.
+            Get all data from yesterday and walk 5 days back from the bucket sensors.
             >>> import datetime
             >>> from datetime import timedelta
             >>> end_time = datetime.datetime.now() - timedelta(days = 1)
-            >>> data = self.get_history(end_time=end_time, days = 5)
+            >>> data = self.get_history(end_time=end_time, days=5, bucket="sensors")
         """
 
         namespace = self._get_namespace(**kwargs)
